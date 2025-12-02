@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capitán Folder | Automatización Inteligente</title>
+    
+    <!-- Fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    
+    <!-- Iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* --- VARIABLES & RESET --- */
+        :root {
+            --bg-dark: #0f172a;       /* Slate 900 */
+            --bg-card: #1e293b;       /* Slate 800 */
+            --bg-card-hover: #334155; /* Slate 700 */
+            --primary: #38bdf8;       /* Sky 400 */
+            --primary-glow: rgba(56, 189, 248, 0.3);
+            --accent: #ef4444;        /* Red 500 */
+            --text-main: #f1f5f9;     /* Slate 100 */
+            --text-muted: #94a3b8;    /* Slate 400 */
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h1, h2, h3, h4 {
+            font-family: var(--font-code);
+            font-weight: 700;
+        }
+
+        .highlight {
+            color: var(--primary);
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: var(--primary);
+            margin: 10px auto 0;
+            border-radius: 2px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            font-size: 1.1rem;
+        }
+
+        /* --- LAYOUT UTILS --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        section {
+            padding: 80px 0;
+        }
+
+        /* --- NAVBAR --- */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .logo {
+            font-family: var(--font-code);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            background: radial-gradient(circle at center, rgba(56, 189, 248, 0.1) 0%, rgba(15, 23, 42, 0) 70%);
+        }
+
+        .hero-content h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 30px var(--primary-glow);
+        }
+
+        .hero-content p {
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            font-family: var(--font-code);
+        }
+
+        .team-pills {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .pill {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .pill i { color: var(--primary); }
+
+        .cta-button {
+            display: inline-block;
+            background: var(--primary);
+            color: var(--bg-dark);
+            padding: 15px 40px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            font-family: var(--font-code);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px var(--primary-glow);
+        }
+
+        /* --- PROBLEM SECTION (Alternate Layout) --- */
+        .problem {
+            background: linear-gradient(to right, var(--bg-dark), #162032);
+        }
+
+        .split-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .split-image {
+            position: relative;
+        }
+
+        .split-image img {
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .split-image::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            width: 100px;
+            height: 100px;
+            border-top: 4px solid var(--accent);
+            border-left: 4px solid var(--accent);
+            z-index: 0;
+        }
+
+        .problem-list li {
+            list-style: none;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            background: rgba(239, 68, 68, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid var(--accent);
+        }
+
+        .badge-red {
+            background: var(--accent);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            font-family: var(--font-code);
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        /* --- OBJECTIVE SECTION --- */
+        .objective-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            padding: 40px;
+            border-radius: 16px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .tech-icons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            font-size: 3rem;
+            color: var(--text-muted);
+        }
+
+        .tech-icons i:first-child { color: var(--primary); }
+
+        /* --- MODULES GRID --- */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 12px;
+            border-top: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-top-color: var(--primary);
+            background: var(--bg-card-hover);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 { margin-bottom: 10px; }
+        .feature-card p { color: var(--text-muted); font-size: 0.95rem; }
+
+        /* --- DEEP DIVES --- */
+        .deep-dive {
+            background: #111827;
+        }
+        
+        .deep-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .deep-item {
+            background: rgba(30, 41, 59, 0.5);
+            padding: 30px;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .deep-item h3 { margin-bottom: 15px; color: var(--text-main); }
+        .deep-item p { color: var(--text-muted); }
+        .deep-item .meta { margin-top: 20px; font-size: 0.85rem; color: var(--primary); font-family: var(--font-code); }
+
+        /* --- VISION (Parallax) --- */
+        .vision-section {
+            background-image: url('http://googleusercontent.com/image_collection/image_retrieval/6353121287294000243');
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+            padding: 120px 0;
+            position: relative;
+        }
+
+        .vision-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.85);
+            z-index: 1;
+        }
+
+        .vision-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px);
+            padding: 60px;
+            border-radius: 16px;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background: #020617;
+            padding: 60px 0 30px;
+            text-align: center;
+            border-top: 1px solid #1e293b;
+        }
+
+        .footer-logo {
+            font-size: 2rem;
+            font-family: var(--font-code);
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .footer-links {
+            margin-bottom: 40px;
+        }
+        
+        .footer-links a {
+            color: var(--text-muted);
+            margin: 0 15px;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover { color: var(--primary); }
+
+        .copyright {
+            color: #475569;
+            font-size: 0.9rem;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .hero-content h1 { font-size: 2.5rem; }
+            .split-layout, .deep-grid { grid-template-columns: 1fr; }
+            .nav-links { display: none; } /* Simplified mobile handling */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav>
+        <div class="container nav-container">
+            <a href="#" class="logo">
+                <i class="fa-solid fa-folder-tree"></i> CAPITÁN FOLDER
+            </a>
+            <div class="nav-links">
+                <a href="#problema">El Problema</a>
+                <a href="#solucion">La Solución</a>
+                <a href="#modulos">Módulos</a>
+                <a href="#vision">Visión</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header class="hero">
+        <div class="container hero-content">
+            <h1><span class="highlight">Automatización</span><br>de Archivos</h1>
+            <p>Transforma el caos digital en orden estructurado con un solo comando.</p>
+            <a href="#modulos" class="cta-button">Ver Funcionalidades <i class="fa-solid fa-arrow-down" style="margin-left: 10px;"></i></a>
+
+            <div class="team-pills">
+                <div class="pill"><i class="fa-solid fa-user"></i> Juan Villarroel</div>
+                <div class="pill"><i class="fa-solid fa-user"></i> Gabriel Carneiro</div>
+                <div class="pill"><i class="fa-solid fa-user"></i> Roand Rodriguez</div>
+                <div class="pill"><i class="fa-solid fa-user"></i> Eliezer Rodriguez</div>
+                <div class="pill"><i class="fa-solid fa-user"></i> Grisangely Martinez</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- PROBLEM SECTION -->
+    <section id="problema" class="problem">
+        <div class="container">
+            <div class="split-layout">
+                <div class="split-image">
+                    <img src="C:\Users\LOQ 15AIX9\OneDrive\Documents\pagina capitan folder\img\elproblema.png" alt="Escritorio Caótico">
+                </div>
+                <div class="split-content">
+                    <span class="badge-red">EL VILLANO</span>
+                    <h2>Caos Digital</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 20px;">
+                        El día a día de un usuario promedio implica lidiar con cientos de archivos desorganizados.
+                    </p>
+                    <ul class="problem-list">
+                        <li>
+                            <i class="fa-solid fa-triangle-exclamation" style="color: var(--accent);"></i>
+                            <div>
+                                <strong>Acumulación descontrolada</strong>
+                                <p style="font-size: 0.9rem; margin:0;">Carpetas "Descargas" y "Documentos" imposibles de navegar.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-clock" style="color: var(--accent);"></i>
+                            <div>
+                                <strong>Pérdida de Tiempo</strong>
+                                <p style="font-size: 0.9rem; margin:0;">Horas desperdiciadas buscando archivos o moviéndolos manualmente.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-magnifying-glass" style="color: var(--accent);"></i>
+                            <div>
+                                <strong>Información Perdida</strong>
+                                <p style="font-size: 0.9rem; margin:0;">Datos importantes sepultados bajo montañas de archivos temporales.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SOLUTION / OBJECTIVE -->
+    <section id="solucion">
+        <div class="container">
+            <h2 class="section-title">Nuestra Misión</h2>
+            <p class="section-subtitle">Desarrollar una herramienta robusta que trabaje por ti.</p>
+
+            <div class="split-layout">
+                <div class="split-content">
+                    <h3 style="font-size: 2rem; margin-bottom: 20px;">Potencia en <span class="highlight">Python</span></h3>
+                    <p style="font-size: 1.1rem; color: var(--text-muted); margin-bottom: 30px;">
+                        Capitán Folder es un programa de consola diseñado para automatizar la gestión, organización y auditoría de archivos en el sistema operativo.
+                    </p>
+                    <div class="tech-icons" style="justify-content: flex-start;">
+                        <i class="fa-brands fa-python" title="Python"></i>
+                        <i class="fa-solid fa-terminal" title="CLI"></i>
+                        <i class="fa-solid fa-file-code" title="Scripts"></i>
+                    </div>
+                </div>
+                <div class="split-image">
+                    <img src="C:\Users\LOQ 15AIX9\OneDrive\Documents\pagina capitan folder\img\capitanfolder.png" alt="Código Python">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MODULES GRID -->
+    <section id="modulos" style="background: #131c2e;">
+        <div class="container">
+            <h2 class="section-title">Arsenal de Herramientas</h2>
+            <p class="section-subtitle">Cuatro módulos principales integrados en una sola solución.</p>
+            
+            <div class="features-grid">
+                <!-- Card 1 -->
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fa-solid fa-sitemap"></i></div>
+                    <h3>Organizador</h3>
+                    <p>Clasifica, renombra y mueve archivos masivamente basándose en extensiones, fechas o tamaños.</p>
+                </div>
+                <!-- Card 2 -->
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fa-solid fa-microchip"></i></div>
+                    <h3>Analizador</h3>
+                    <p>Escanea el contenido de archivos de texto buscando patrones (Regex) como emails o fechas específicas.</p>
+                </div>
+                <!-- Card 3 -->
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fa-solid fa-user-shield"></i></div>
+                    <h3>Auditor</h3>
+                    <p>Vigilancia activa. Detecta cambios en el directorio, archivos nuevos, modificados o eliminados.</p>
+                </div>
+                <!-- Card 4 -->
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fa-solid fa-file-csv"></i></div>
+                    <h3>Reportes</h3>
+                    <p>Genera informes automáticos en CSV y TXT con todas las estadísticas de las operaciones realizadas.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DEEP DIVES -->
+    <section class="deep-dive">
+        <div class="container">
+            <div class="deep-grid">
+                <div class="deep-item">
+                    <h3><i class="fa-solid fa-check circle-icon"></i> Organización Automática</h3>
+                    <p>Deja de arrastrar y soltar. Configura reglas simples y deja que el Capitán limpie tu escritorio en segundos.</p>
+                    <div class="meta">> Modo Simulación incluido para seguridad.</div>
+                </div>
+                <div class="deep-item">
+                    <h3><i class="fa-solid fa-check circle-icon"></i> Auditoría y Trazabilidad</h3>
+                    <p>Seguridad ante todo. Mantén un registro histórico (Snapshot) del estado de tus carpetas importantes.</p>
+                    <div class="meta">> Detección de intrusiones o cambios no autorizados.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- VISION PARALLAX -->
+    <section id="vision" class="vision-section">
+        <div class="vision-overlay"></div>
+        <div class="container">
+            <div class="vision-content">
+                <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Visión del Futuro</h2>
+                <p style="font-size: 1.2rem; color: var(--text-main);">
+                    "Consolidarse como la herramienta esencial de automatización en línea de comandos, permitiendo transformar el caos digital en estructuras organizadas y auditables."
+                </p>
+                <div style="margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+                    <p style="color: var(--primary);">Eliminando el error humano de las tareas repetitivas.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- VALUES -->
+    <section style="background: var(--bg-dark);">
+        <div class="container">
+            <h2 class="section-title">Nuestros Valores</h2>
+            <div class="features-grid" style="margin-top: 40px;">
+                <div class="feature-card" style="text-align: center; border: 1px solid #334155;">
+                    <i class="fa-solid fa-bolt" style="font-size: 2rem; color: var(--text-main); margin-bottom: 15px;"></i>
+                    <h4>Eficiencia</h4>
+                </div>
+                <div class="feature-card" style="text-align: center; border: 1px solid #334155;">
+                    <i class="fa-regular fa-eye" style="font-size: 2rem; color: var(--text-main); margin-bottom: 15px;"></i>
+                    <h4>Transparencia</h4>
+                </div>
+                <div class="feature-card" style="text-align: center; border: 1px solid #334155;">
+                    <i class="fa-solid fa-cubes" style="font-size: 2rem; color: var(--text-main); margin-bottom: 15px;"></i>
+                    <h4>Modularidad</h4>
+                </div>
+                <div class="feature-card" style="text-align: center; border: 1px solid #334155;">
+                    <i class="fa-solid fa-shield-halved" style="font-size: 2rem; color: var(--text-main); margin-bottom: 15px;"></i>
+                    <h4>Confiabilidad</h4>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-logo">
+                <i class="fa-solid fa-folder-tree"></i>
+            </div>
+            <div class="footer-links">
+                <a href="https://github.com/grism13/juangriegoproyecto">Github</a>
+                <a href="#">Documentación</a>
+                <a href="#">Equipo</a>
+            </div>
+            <p class="copyright">
+                Proyecto de Programación I | Universidad de Margarita<br>
+                &copy; 2025 Capitán Folder Team. Todos los derechos reservados.
+            </p>
+        </div>
+    </footer>
+
+</body>
+</html>
